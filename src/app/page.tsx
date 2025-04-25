@@ -30,17 +30,21 @@ export default function Home() {
 
         <main className="flex-1 relative h-full overflow-y-auto">
           {/* Grey background container */}
-          <div className="absolute top-5 left-5 bottom-5 right-5 rounded-xl z-0 transition-all duration-500" />
 
           {/* White foreground box */}
-          <div className={`absolute transition-all duration-500 z-10 inset-5`}>
+          <div
+            className={`absolute transition-all duration-500 z-10 inset-5 left-0 `}
+          >
             <div className="bg-white rounded-[30px] w-full h-full flex flex-col">
               <div className="p-8 flex flex-1 overflow-hidden rounded-[30px]">
                 {/* Left Side - Chat + Upload */}
                 <div className="flex flex-col overflow-scroll w-full transition-all duration-500">
                   <div className="flex justify-center items-center mb-4">
                     <h1 className="text-3xl font-medium">
-                      Welcome back, <span className="bg-gradient-to-r from-[#D62976] via-[#EB3D53] to-[#ED6B36] bg-clip-text text-transparent">{user}</span>
+                      Welcome back,{" "}
+                      <span className="bg-gradient-to-r from-[#D62976] via-[#EB3D53] to-[#ED6B36] bg-clip-text text-transparent">
+                        {user}
+                      </span>
                     </h1>
                   </div>
 

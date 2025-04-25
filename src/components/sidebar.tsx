@@ -14,21 +14,24 @@ export default function Sidebar() {
         <Image src={reveal_logo} alt="logo" width={200} height={200} />
       </div>
 
-      <nav className="flex-1 px-4 mt-8">
+      <nav className="flex-1  mt-8">
         <ul className="space-y-2">
-          <li>
+          <li className="relative  ml-5">
+            <div className="bg-[#84acc4] h-3 z-20 absolute w-full top-0 rounded-br-full " />
             <button
-              className={`flex items-center w-full px-4 py-3 rounded-lg ${
+              className={`relative flex items-center z-10 w-full px-4 py-7 transition-all rounded-l-full  ${
                 activeItem === "home"
-                  ? "bg-white"
-                  : "hover:bg-white hover:bg-opacity-10"
+                  ? "bg-white text-black active-tab"
+                  : "hover:bg-white hover:bg-opacity-10 text-white"
               }`}
               onClick={() => setActiveItem("home")}
             >
               <Home className="h-5 w-5 mr-3" />
               <span className="font-medium">Home</span>
             </button>
+            <div className="bg-[#8cb4cb] h-3 z-20 absolute  w-full top-17 rounded-tr-full " />
           </li>
+
           {/* <li>
             <button
               className={`flex items-center w-full px-4 py-3 rounded-lg ${
