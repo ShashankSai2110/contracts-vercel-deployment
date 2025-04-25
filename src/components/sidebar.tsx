@@ -17,9 +17,10 @@ export default function Sidebar() {
       <nav className="flex-1  mt-8">
         <ul className="space-y-2">
           <li className="relative  ml-5">
-            <div className="bg-[#84acc4] h-3 z-20 absolute w-full top-0 rounded-br-full " />
+            <div className="bg-[#84acc4] h-3 z-20 absolute w-full top-[-12px] rounded-br-full " />
+            <div className="bg-white h-3 z-10 absolute w-full top-[-12px] " />
             <button
-              className={`relative flex items-center z-10 w-full px-4 py-7 transition-all rounded-l-full  ${
+              className={`relative flex items-center z-10 w-full px-4 py-4 transition-all rounded-l-full  ${
                 activeItem === "home"
                   ? "bg-white text-black active-tab"
                   : "hover:bg-white hover:bg-opacity-10 text-white"
@@ -29,7 +30,8 @@ export default function Sidebar() {
               <Home className="h-5 w-5 mr-3" />
               <span className="font-medium">Home</span>
             </button>
-            <div className="bg-[#8cb4cb] h-3 z-20 absolute  w-full top-17 rounded-tr-full " />
+            <div className="bg-[#8cb4cb] h-3 z-20 absolute  w-full top-14 rounded-tr-full " />
+            <div className="bg-white h-3 z-10 absolute  w-full top-14  " />
           </li>
 
           {/* <li>
