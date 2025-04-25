@@ -11,7 +11,6 @@ export default function Sidebar() {
   return (
     <div className="w-64 h-full flex flex-col">
       <div className="p-6 mt-5">
-        
         <Image src={reveal_logo} alt="logo" width={200} height={200} />
       </div>
 

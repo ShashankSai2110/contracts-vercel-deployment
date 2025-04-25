@@ -3,7 +3,11 @@ import { useStore } from "@/lib/useStore";
 import { useRef } from "react";
 import { FallingLines, DNA, Blocks } from "react-loader-spinner";
 
-export default function WebSocketLoaders({ isUploadComplete }: { isUploadComplete: boolean }) {
+export default function WebSocketLoaders({
+  isUploadComplete,
+}: {
+  isUploadComplete: boolean;
+}) {
   const socketRef = useRef<WebSocket | null>(null);
   const { socketState, setSocketState, sessionId } = useStore();
 

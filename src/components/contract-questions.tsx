@@ -6,7 +6,8 @@ import { apiRequest } from "@/network/apis";
 import constants from "@/lib/constants";
 
 export default function ContractQuestions() {
-  const { questions, setMessages, messages, setBotLoading, sessionId } = useStore();
+  const { questions, setMessages, messages, setBotLoading, sessionId } =
+    useStore();
 
   const askPredefinedQuestion = async (question: Question) => {
     try {
@@ -14,7 +15,7 @@ export default function ContractQuestions() {
       setBotLoading(true);
       const requestBody = {
         question_id: question.id,
-        session_id: sessionId,
+        session_id: sessionId.toString(),
       };
       // Get employee details using the numeric id
       const response = await apiRequest<Message[]>(

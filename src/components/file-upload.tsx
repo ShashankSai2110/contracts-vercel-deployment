@@ -6,7 +6,11 @@ import { apiRequest } from "@/network/apis";
 import constants from "@/lib/constants";
 import { useStore } from "@/lib/useStore";
 
-export default function FileUpload({ setIsUploadComplete }: { setIsUploadComplete: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function FileUpload({
+  setIsUploadComplete,
+}: {
+  setIsUploadComplete: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<FileWithProgress[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -85,7 +89,7 @@ export default function FileUpload({ setIsUploadComplete }: { setIsUploadComplet
     );
     // Check if all files are uploaded and set the button visibility state
     const allFilesComplete = files.every((file) => file.status === "complete");
-    setIsUploadComplete(allFilesComplete); 
+    setIsUploadComplete(allFilesComplete);
   };
 
   const removeFile = (fileToRemove: File) => {
@@ -125,12 +129,11 @@ export default function FileUpload({ setIsUploadComplete }: { setIsUploadComplet
           multiple
           accept="application/pdf"
         />
-        
       </div>
       <div className="w-full flex justify-between text-xs text-gray-500 mt-4">
-          <span>Supported formats: PDF</span>
-          <span>Maximum Size: 25MB</span>
-        </div>
+        <span>Supported formats: PDF</span>
+        <span>Maximum Size: 25MB</span>
+      </div>
 
       {files.length > 0 && (
         <div className="mt-4 space-y-3 max-h-48 overflow-y-auto">

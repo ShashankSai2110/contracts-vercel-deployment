@@ -27,7 +27,7 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
   }, [messages]);
 
   return (
-    <div className="h-full overflow-y-auto space-y-4 pr-2 mt-5">
+    <div className="h-full space-y-4 pr-2 mt-5">
       <AnimatePresence initial={false}>
         {messages.map((msg, idx) => {
           const isNew =

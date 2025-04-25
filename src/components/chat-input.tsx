@@ -11,7 +11,8 @@ import { useStore } from "@/lib/useStore";
 
 export default function ChatInput() {
   const [message, setMessage] = useState("");
-  const { setQuestions, messages, setMessages, setBotLoading, sessionId } = useStore();
+  const { setQuestions, messages, setMessages, setBotLoading, sessionId } =
+    useStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     try {
@@ -20,7 +21,7 @@ export default function ChatInput() {
         let msg = message;
         let requestBody = {
           message: msg,
-          session_id: sessionId,
+          session_id: sessionId.toString(),
         };
 
         setBotLoading(true);
@@ -66,7 +67,7 @@ export default function ChatInput() {
   return (
     <div className="mt-5">
       <form onSubmit={handleSubmit} className="relative">
-      <textarea
+        <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="How can I help?"
