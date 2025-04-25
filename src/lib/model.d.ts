@@ -23,6 +23,8 @@ type CounterState = {
   setMessages: (newMessages: Message[]) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
+  isFileUploaded: boolean;
+  setIsFileUploaded: (isFileUploaded: boolean) => void;
   questions: Question[];
   setQuestions: (newQuestions: Question[]) => void;
   botLoading: boolean;

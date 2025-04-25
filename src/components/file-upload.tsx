@@ -16,7 +16,7 @@ export default function FileUpload({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Replace this with your actual session ID from cookies, context, props, etc.
-  const { sessionId } = useStore();
+  const { sessionId, setIsFileUploaded } = useStore();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -87,9 +87,11 @@ export default function FileUpload({
           : pf
       )
     );
+
     // Check if all files are uploaded and set the button visibility state
     const allFilesComplete = files.every((file) => file.status === "complete");
     setIsUploadComplete(allFilesComplete);
+    setIsFileUploaded(allFilesComplete); // Update the file uploaded state
   };
 
   const removeFile = (fileToRemove: File) => {

@@ -6,7 +6,7 @@ import { apiRequest } from "@/network/apis";
 import constants from "@/lib/constants";
 
 export default function ContractQuestions() {
-  const { questions, setMessages, messages, setBotLoading, sessionId } =
+  const { questions, setMessages, messages, setBotLoading, sessionId, isFileUploaded } =
     useStore();
 
   const askPredefinedQuestion = async (question: Question) => {
@@ -40,14 +40,24 @@ export default function ContractQuestions() {
     <div className="grid grid-cols-2 gap-1">
       {questions.map((q) => (
         <button
-          key={q.id}
-          className="flex items-center justify-between text-left border border-gray-200 rounded-lg p-3 hover:bg-gray-50"
-          onClick={() => {
+        key={q.id}
+        className={`flex items-center gap-2 cursor-pointer text-left p-3 ${
+          !isFileUploaded ? "cursor-not-allowed opacity-50" : ""
+        }`}
+        onClick={() => {
+          if (isFileUploaded) {
             askPredefinedQuestion(q);
-          }}
-        >
-          <span className="text-sm text-gray-600">{q.question}</span>
-          <Plus className="h-4 w-4 text-gray-400" />
+          }
+        }}
+        disabled={!isFileUploaded} 
+      >
+          <Plus className={`h-4 w-4 ${
+          !isFileUploaded ? "text-[#A7A5A6]" : "text-[#9E1F63]"
+        }`} />
+          <span className={`text-sm ${
+          !isFileUploaded ? "text-[#A7A5A6]" : "text-[#000E14]"
+        }`}>{q.question}</span>
+          
         </button>
       ))}
     </div>

@@ -11,12 +11,25 @@ import { useStore } from "@/lib/useStore";
 
 export default function ChatInput() {
   const [message, setMessage] = useState("");
-  const { setQuestions, messages, setMessages, setBotLoading, sessionId } =
-    useStore();
+  const {
+    setQuestions,
+    messages,
+    setMessages,
+    setBotLoading,
+    sessionId,
+    isFileUploaded,
+  } = useStore();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
+
+      if (!isFileUploaded) {
+        setErrorMessage("Please upload a file before sending your message.");
+        return;
+      }
+
       if (message.trim()) {
         let msg = message;
         let requestBody = {
@@ -45,6 +58,11 @@ export default function ChatInput() {
   };
 
   useEffect(() => {
+
+    if (isFileUploaded) {
+      setErrorMessage("");
+    }
+
     const fetchData = async () => {
       try {
         // Get employee details using the numeric id
@@ -62,29 +80,47 @@ export default function ChatInput() {
     };
 
     fetchData();
-  }, []);
+  }, [isFileUploaded]);
 
   return (
-    <div className="mt-5">
-      <form onSubmit={handleSubmit} className="relative">
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="How can I help?"
-          rows={6}
-          className="w-full border border-gray-300 rounded-lg py-4 px-4 pr-12 focus:outline-none resize-none"
-        />
-        <button
-          type="submit"
-          className="absolute bottom-4 right-4 text-gray-400 hover:text-gray-600"
-        >
-          <SendHorizontal className="h-6 w-6" />
-        </button>
-      </form>
-
-      <div className="mt-2">
-        <ContractQuestions />
+    <>
+      <div className="flex justify-center items-center mb-4 italic">
+        {errorMessage && (
+          <div className="mt-2 text-sm bg-gradient-to-r from-[#D62976] via-[#EB3D53] to-[#ED6B36] bg-clip-text text-transparent">
+            {errorMessage}
+          </div>
+        )}
       </div>
-    </div>
+
+      <div className="mt-5">
+        <form onSubmit={handleSubmit} className="relative">
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+            placeholder="How can I help?"
+            rows={6}
+            className="w-full border border-gray-300 rounded-lg py-4 px-4 pr-12 focus:outline-none resize-none"
+          />
+          <button
+            type="submit"
+            className="absolute bottom-4 right-4 text-gray-400 hover:text-gray-600"
+          >
+            <SendHorizontal className={`h-6 w-6 ${
+              !isFileUploaded ? "text-[#A7A5A6]" : "text-[#9E1F63]"
+            }`} />
+          </button>
+        </form>
+
+        <div className="mt-2">
+          <ContractQuestions />
+        </div>
+      </div>
+    </>
   );
 }

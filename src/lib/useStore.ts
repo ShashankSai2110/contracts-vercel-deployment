@@ -8,6 +8,8 @@ export const useStore = create<CounterState>((set, get) => ({
   botLoading: false,
   socketState: null,
   uploadedFiles: [],
+  isFileUploaded: false,
+  setIsFileUploaded: (isFileUploaded: boolean) => set({ isFileUploaded }),
   setLoading: (loading) => set({ loading }),
   sessionId: Math.floor(Math.random() * 1000000),
   setBotLoading: (loading) => set({ botLoading: loading }),

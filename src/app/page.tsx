@@ -39,8 +39,8 @@ export default function Home() {
                 {/* Left Side - Chat + Upload */}
                 <div className="flex flex-col overflow-scroll w-full transition-all duration-500">
                   <div className="flex justify-center items-center mb-4">
-                    <h1 className="text-2xl font-medium">
-                      Welcome back, <span className="text-red-500">{user}</span>
+                    <h1 className="text-3xl font-medium">
+                      Welcome back, <span className="bg-gradient-to-r from-[#D62976] via-[#EB3D53] to-[#ED6B36] bg-clip-text text-transparent">{user}</span>
                     </h1>
                   </div>
 
