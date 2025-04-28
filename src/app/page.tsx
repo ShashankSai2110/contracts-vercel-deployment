@@ -4,12 +4,12 @@ import Sidebar from "@/components/sidebar";
 import FileUpload from "@/components/file-upload";
 import ChatInput from "@/components/chat-input";
 import ChatMessages from "@/components/chat-messages";
+import UploadSupportingDocuments from "@/components/supporting-documents-upload";
 import { useStore } from "@/lib/useStore";
 import WebSocketLoaders from "@/components/web-socket-loaders";
 import background from "@/assets/background.png";
-
 export default function Home() {
-  const { user, messages } = useStore();
+  const { user, messages, isFileUploaded } = useStore();
 
   return (
     <div
@@ -46,6 +46,7 @@ export default function Home() {
 
                   <div className="flex-1 flex flex-col">
                     <FileUpload />
+                    {isFileUploaded && <UploadSupportingDocuments />}
                     <WebSocketLoaders />
                     <ChatMessages messages={messages} />
                     <ChatInput />

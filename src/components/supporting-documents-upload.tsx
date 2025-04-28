@@ -1,18 +1,17 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { FileText, X, Check } from "lucide-react";
+import { FileDiff, X, Check } from "lucide-react";
 import { apiRequest } from "@/network/apis";
 import constants from "@/lib/constants";
 import { useStore } from "@/lib/useStore";
 
-export default function FileUpload() {
+export default function UploadSupportingDocuments() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<FileWithProgress[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
 
-  // Replace this with your actual session ID from cookies, context, props, etc.
   const { sessionId, setIsFileUploaded, setSocketState } = useStore();
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -51,8 +50,8 @@ export default function FileUpload() {
 
     const formData = new FormData();
     formData.append("session_id", sessionId.toString());
-    formData.append("category", "contract");
-    
+    formData.append("category", "supportingDocument"); 
+
     newFiles.forEach((fileWithProgress) => {
       formData.append("files", fileWithProgress.file);
     });
@@ -99,8 +98,6 @@ export default function FileUpload() {
     }
   };
 
-  // Replace this with actual session ID from cookies, context, or props
-
   const processFile = () => {
     const wsUrl = `ws://localhost:8000/api/v1/chat/embed_documents?session_id=${sessionId}`;
     socketRef.current = new WebSocket(wsUrl);
@@ -138,18 +135,18 @@ export default function FileUpload() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto mt-4">
       <div
-        className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center ${
+        className={`border-2 border-dashed rounded-lg p-3 flex flex-col items-center justify-center ${
           isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <FileText className="h-12 w-12 text-gray-400 mb-4" />
-        <p className="text-gray-600 mb-2">
-          Drop Files Here or{" "}
+        <FileDiff className="h-6 w-6 text-gray-400 mb-2" />
+        <p className="text-gray-600 mb-2 text-sm">
+         Optional: Upload Supporting Documents Here or{" "}
           <span
             className="text-gray-600 cursor-pointer underline"
             onClick={openFileDialog}
@@ -167,10 +164,10 @@ export default function FileUpload() {
           accept="application/pdf"
         />
       </div>
-      <div className="w-full flex justify-between text-xs text-gray-500 mt-4">
+      {/* <div className="w-full flex justify-between text-xs text-gray-500 mt-4">
         <span>Supported formats: PDF</span>
         <span>Maximum Size: 25MB</span>
-      </div>
+      </div> */}
 
       {files.length > 0 && (
         <div className="mt-4 space-y-3 max-h-48 overflow-y-auto">
@@ -180,7 +177,7 @@ export default function FileUpload() {
               className="flex items-center justify-between bg-gray-50 p-3 rounded-md"
             >
               <div className="flex items-center space-x-3">
-                <FileText className="h-5 w-5 text-gray-700" />
+                <FileDiff className="h-5 w-5 text-gray-700" />
                 <span className="text-sm text-gray-700">
                   {fileWithProgress.file.name}
                 </span>
