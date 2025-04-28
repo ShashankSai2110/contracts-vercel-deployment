@@ -1,3 +1,4 @@
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import constants from "@/lib/constants";
 
 interface ApiResponse<T = any> {
@@ -11,11 +12,12 @@ export const apiRequest = async <T>(
   endpoint: string,
   method: string = "GET",
   body?: any,
-  isFormData: boolean = false
+  isFormData: boolean = false,
+  onUploadProgress?: (progressEvent: import("axios").AxiosProgressEvent) => void
 ): Promise<ApiResponse<T>> => {
   try {
-    //const token = localStorage.getItem(constants.TOKEN);
-    const headers: HeadersInit = {};
+    // const token = localStorage.getItem(constants.TOKEN);
+    const headers: Record<string, string> = {};
 
     // if (token) {
     //   headers["Authorization"] = `Bearer ${token}`;
@@ -25,59 +27,37 @@ export const apiRequest = async <T>(
       headers["Content-Type"] = "application/json";
     }
 
-    const requestOptions: RequestInit = {
+    const config: AxiosRequestConfig = {
       method,
+      url: `${constants.API_URL}${endpoint}`,
       headers,
+      data: isFormData ? body : JSON.stringify(body),
+      onUploadProgress,
     };
 
-    if (body) {
-      if (isFormData) {
-        requestOptions.body = body;
-      } else {
-        requestOptions.body = JSON.stringify(body);
-      }
-    }
+    const response: AxiosResponse = await axios(config);
 
-    const response = await fetch(
-      `${constants.API_URL}${endpoint}`,
-      requestOptions
-    );
-    const contentType = response.headers.get("Content-Type") || "";
+    const contentType = response.headers["content-type"] || "";
     const isCSV = contentType.includes("text/csv");
-    // Log the raw response
-    console.log("API Response:", {
-      status: response.status,
-      statusText: response.statusText,
-      headers: Object.fromEntries(response.headers.entries()),
-    });
+    const data = isCSV ? response.data : response.data;
 
-    if (response.status === 204) {
-      return {
-        ok: true,
-        data: null,
-        headers: {},
-      };
-    }
-
-    const data = isCSV ? await response.text() : await response.json();
-
-    // Get pagination headers
-    const responseHeaders: Record<string, string> = {};
-    responseHeaders["total-pages"] = response.headers.get("total-pages") || "1";
-    responseHeaders["current-page"] =
-      response.headers.get("current-page") || "1";
+    // Custom pagination headers if needed
+    const responseHeaders: Record<string, string> = {
+      "total-pages": response.headers["total-pages"] || "1",
+      "current-page": response.headers["current-page"] || "1",
+    };
 
     return {
-      ok: response.ok,
-      data: response.ok ? data : undefined,
-      error: !response.ok ? data : undefined,
+      ok: response.status >= 200 && response.status < 300,
+      data,
       headers: responseHeaders,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("API Request Error:", error);
+
     return {
       ok: false,
-      error: "Network error occurred",
+      error: error.response?.data || "Network error occurred",
     };
   }
 };

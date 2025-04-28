@@ -31,5 +31,4 @@ type CounterState = {
   setBotLoading: (loading: boolean) => void;
   socketState: SocketState;
   setSocketState: (state: SocketState) => void;
-  uploadedFiles: FileWithProgress[];
 };

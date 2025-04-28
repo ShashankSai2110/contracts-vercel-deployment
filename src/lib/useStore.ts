@@ -7,7 +7,6 @@ export const useStore = create<CounterState>((set, get) => ({
   questions: [],
   botLoading: false,
   socketState: null,
-  uploadedFiles: [],
   isFileUploaded: false,
   setIsFileUploaded: (isFileUploaded: boolean) => set({ isFileUploaded }),
   setLoading: (loading) => set({ loading }),
@@ -16,6 +15,4 @@ export const useStore = create<CounterState>((set, get) => ({
   setMessages: (newMessages) => set({ messages: newMessages }),
   setQuestions: (newQuestions) => set({ questions: newQuestions }),
   setSocketState: (socketState: SocketState) => set({ socketState }),
-  setUploadedFiles: (newUploadedFiles: FileWithProgress) =>
-    set({ uploadedFiles: get().uploadedFiles.concat(newUploadedFiles) }),
 }));

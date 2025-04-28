@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useEffect, useState } from "react";
-import { Send, SendHorizontal } from "lucide-react";
+import { SendHorizontal } from "lucide-react";
 import ContractQuestions from "./contract-questions";
 import { apiRequest } from "@/network/apis";
 import constants from "@/lib/constants";
@@ -58,7 +58,6 @@ export default function ChatInput() {
   };
 
   useEffect(() => {
-
     if (isFileUploaded) {
       setErrorMessage("");
     }
@@ -111,9 +110,11 @@ export default function ChatInput() {
             type="submit"
             className="absolute bottom-4 right-4 text-gray-400 hover:text-gray-600"
           >
-            <SendHorizontal className={`h-6 w-6 ${
-              !isFileUploaded ? "text-[#A7A5A6]" : "text-[#9E1F63]"
-            }`} />
+            <SendHorizontal
+              className={`h-6 w-6 ${
+                !isFileUploaded ? "text-[#A7A5A6]" : "text-[#9E1F63]"
+              }`}
+            />
           </button>
         </form>
 

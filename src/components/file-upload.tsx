@@ -6,17 +6,14 @@ import { apiRequest } from "@/network/apis";
 import constants from "@/lib/constants";
 import { useStore } from "@/lib/useStore";
 
-export default function FileUpload({
-  setIsUploadComplete,
-}: {
-  setIsUploadComplete: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<FileWithProgress[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const socketRef = useRef<WebSocket | null>(null);
 
   // Replace this with your actual session ID from cookies, context, props, etc.
-  const { sessionId, setIsFileUploaded } = useStore();
+  const { sessionId, setIsFileUploaded, setSocketState } = useStore();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -43,7 +40,7 @@ export default function FileUpload({
     }
   };
 
-  const handleFiles = (fileList: FileList) => {
+  const handleFiles = async (fileList: FileList) => {
     const newFiles = Array.from(fileList).map((file) => ({
       file,
       progress: 0,
@@ -52,46 +49,83 @@ export default function FileUpload({
 
     setFiles((prev) => [...prev, ...newFiles]);
 
-    newFiles.forEach((fileWithProgress) => {
-      uploadFile(fileWithProgress);
-    });
-  };
-
-  const uploadFile = async (fileWithProgress: FileWithProgress) => {
     const formData = new FormData();
     formData.append("session_id", sessionId.toString());
-    formData.append("files", fileWithProgress.file);
 
-    // Set initial status
-    setFiles((prevFiles) =>
-      prevFiles.map((pf) =>
-        pf.file === fileWithProgress.file ? { ...pf, status: "uploading" } : pf
-      )
-    );
+    newFiles.forEach((fileWithProgress) => {
+      formData.append("files", fileWithProgress.file);
+    });
+
+    const totalSize = newFiles.reduce((acc, f) => acc + f.file.size, 0);
 
     const response = await apiRequest(
-      constants.UPLOAD_FILE, // Update with your actual upload endpoint if different
+      constants.UPLOAD_FILE,
       "POST",
       formData,
-      true // isFormData
+      true,
+      (progressEvent) => {
+        const loaded = progressEvent.loaded ?? 0;
+
+        const progressPercent = Math.round((loaded / totalSize) * 100);
+
+        setFiles((prevFiles) =>
+          prevFiles.map((f) =>
+            newFiles.some((nf) => nf.file === f.file)
+              ? { ...f, progress: progressPercent }
+              : f
+          )
+        );
+      }
     );
 
-    setFiles((prevFiles) =>
-      prevFiles.map((pf) =>
-        pf.file === fileWithProgress.file
-          ? {
-              ...pf,
-              status: response.ok ? "complete" : "error",
-              progress: 100,
-            }
-          : pf
-      )
-    );
+    if (response.ok) {
+      setFiles((prevFiles) =>
+        prevFiles.map((f) =>
+          newFiles.some((nf) => nf.file === f.file)
+            ? { ...f, status: "complete", progress: 100 }
+            : f
+        )
+      );
+      processFile();
+    } else {
+      setFiles((prevFiles) =>
+        prevFiles.map((f) =>
+          newFiles.some((nf) => nf.file === f.file)
+            ? { ...f, status: "error", progress: 0 }
+            : f
+        )
+      );
+    }
+  };
 
-    // Check if all files are uploaded and set the button visibility state
-    const allFilesComplete = files.every((file) => file.status === "complete");
-    setIsUploadComplete(allFilesComplete);
-    setIsFileUploaded(allFilesComplete); // Update the file uploaded state
+  // Replace this with actual session ID from cookies, context, or props
+
+  const processFile = () => {
+    const wsUrl = `ws://localhost:8000/api/v1/chat/embed_documents?session_id=${sessionId}`;
+    socketRef.current = new WebSocket(wsUrl);
+
+    socketRef.current.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    socketRef.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log("WebSocket message:", message);
+
+      if (["chunking", "embedding", "saving"].includes(message.status)) {
+        setSocketState(message.status as any);
+      }
+
+      if (message.status === "done") {
+        setSocketState("done");
+        socketRef.current?.close();
+        setIsFileUploaded(true);
+      }
+    };
+
+    socketRef.current.onerror = (e) => {
+      console.error("WebSocket error", e);
+    };
   };
 
   const removeFile = (fileToRemove: File) => {

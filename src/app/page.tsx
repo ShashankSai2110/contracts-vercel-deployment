@@ -4,16 +4,12 @@ import Sidebar from "@/components/sidebar";
 import FileUpload from "@/components/file-upload";
 import ChatInput from "@/components/chat-input";
 import ChatMessages from "@/components/chat-messages";
-import { Loader } from "lucide-react";
 import { useStore } from "@/lib/useStore";
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import WebSocketLoaders from "@/components/web-socket-loaders";
 import background from "@/assets/background.png";
 
 export default function Home() {
-  const { user, messages, socketState, uploadedFiles } = useStore();
-  const [isUploadComplete, setIsUploadComplete] = useState(false);
+  const { user, messages } = useStore();
 
   return (
     <div
@@ -28,7 +24,7 @@ export default function Home() {
       <div className="relative flex h-screen w-full bg-[#FFFFFF73] rounded-tl-[30px] rounded-bl-[30px]">
         <Sidebar />
 
-        <main className="flex-1 relative h-full overflow-y-auto">
+        <main className="flex-1 relative h-full overflow-y-auto scrollbar-hide">
           {/* Grey background container */}
 
           {/* White foreground box */}
@@ -49,11 +45,8 @@ export default function Home() {
                   </div>
 
                   <div className="flex-1 flex flex-col">
-                    <FileUpload setIsUploadComplete={setIsUploadComplete} />
-                    {socketState !== "done" && (
-                      <WebSocketLoaders isUploadComplete={isUploadComplete} />
-                    )}
-
+                    <FileUpload />
+                    <WebSocketLoaders />
                     <ChatMessages messages={messages} />
                     <ChatInput />
                   </div>
