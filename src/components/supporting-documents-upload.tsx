@@ -5,6 +5,7 @@ import { FileDiff, X, Check } from "lucide-react";
 import { apiRequest } from "@/network/apis";
 import constants from "@/lib/constants";
 import { useStore } from "@/lib/useStore";
+import { toast } from "@/hooks/use-toast";
 
 export default function UploadSupportingDocuments() {
   const [isDragging, setIsDragging] = useState(false);
@@ -50,7 +51,7 @@ export default function UploadSupportingDocuments() {
 
     const formData = new FormData();
     formData.append("session_id", sessionId.toString());
-    formData.append("category", "supportingDocument"); 
+    formData.append("category", constants.CATEGORIES.SUPPORTING_DOCUMENT); 
 
     newFiles.forEach((fileWithProgress) => {
       formData.append("files", fileWithProgress.file);
@@ -99,7 +100,7 @@ export default function UploadSupportingDocuments() {
   };
 
   const processFile = () => {
-    const wsUrl = `ws://localhost:8000/api/v1/chat/embed_documents?session_id=${sessionId}`;
+    const wsUrl = `${constants.WS_URL}?session_id=${sessionId}`; 
     socketRef.current = new WebSocket(wsUrl);
 
     socketRef.current.onopen = () => {
@@ -107,22 +108,35 @@ export default function UploadSupportingDocuments() {
     };
 
     socketRef.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log("WebSocket message:", message);
-
-      if (["chunking", "embedding", "saving"].includes(message.status)) {
-        setSocketState(message.status as any);
-      }
-
-      if (message.status === "done") {
-        setSocketState("done");
+      try {
+        const message = JSON.parse(event.data);
+        
+        if (["chunking", "embedding", "saving"].includes(message.status)) {
+          setSocketState(message.status as any);
+        }
+    
+        if (message.status === "done") {
+          setSocketState("done");
+          socketRef.current?.close();
+          setIsFileUploaded(true);
+        }
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Processing Error",
+          description: "Failed to process server message. Please try again.",
+        });
+        setSocketState(null);
         socketRef.current?.close();
-        setIsFileUploaded(true);
       }
     };
 
     socketRef.current.onerror = (e) => {
-      console.error("WebSocket error", e);
+      toast({
+        variant: "destructive",
+        title: "Connection Error",
+        description: "Failed to establish WebSocket connection. Please try again.",
+      });
     };
   };
 
