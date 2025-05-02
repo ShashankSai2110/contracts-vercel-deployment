@@ -200,7 +200,6 @@ export default function FileUpload() {
           ref={fileInputRef}
           onChange={handleFileChange}
           disabled={isUploading}
-          multiple
           accept="application/pdf"
         />
       </div>
