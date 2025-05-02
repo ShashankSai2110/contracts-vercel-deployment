@@ -27,6 +27,8 @@ export const apiRequest = async <T>(
       headers["Content-Type"] = "application/json";
     }
 
+    headers["ngrok-skip-browser-warning"] = "69420";
+
     const config: AxiosRequestConfig = {
       method,
       url: `${constants.API_URL}${endpoint}`,
