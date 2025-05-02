@@ -1,6 +1,7 @@
 import type React from "react";
 import "./globals.css";
 import type { Metadata } from "next";
+import { ToastProvider, ToastViewport, Toaster } from "@/components/ui/toast";
 
 export const metadata: Metadata = {
   title: "Payer Contract Interface",
@@ -15,7 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ToastProvider>
+          {children}
+          <ToastViewport />
+          <Toaster />
+        </ToastProvider>
+      </body>
     </html>
   );
 }
