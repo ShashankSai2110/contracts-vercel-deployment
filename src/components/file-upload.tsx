@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<FileWithProgress[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
 
@@ -18,8 +19,9 @@ export default function FileUpload() {
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(true);
-  };
+    if (!isUploading) {
+      setIsDragging(true);
+    }  };
 
   const handleDragLeave = () => {
     setIsDragging(false);
@@ -27,21 +29,31 @@ export default function FileUpload() {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(false);
-    const droppedFiles = e.dataTransfer.files;
-    if (droppedFiles && droppedFiles.length > 0) {
-      handleFiles(droppedFiles);
+    if (!isUploading) {
+      setIsDragging(false);
+      const droppedFiles = e.dataTransfer.files;
+      if (droppedFiles && droppedFiles.length > 0) {
+        handleFiles(droppedFiles);
+      }
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
-    if (selectedFiles && selectedFiles.length > 0) {
+    if (selectedFiles && selectedFiles.length > 0 && !isUploading) {
       handleFiles(selectedFiles);
     }
   };
 
   const handleFiles = async (fileList: FileList) => {
+    if (files.length > 0) {
+      toast({
+        variant: "destructive",
+        title: "Upload Error",
+        description: "You can upload only one contract file at a time.",
+      });
+      return;
+    }
     const newFiles = Array.from(fileList).map((file) => ({
       file,
       progress: 0,
@@ -49,6 +61,7 @@ export default function FileUpload() {
     }));
 
     setFiles((prev) => [...prev, ...newFiles]);
+    setIsUploading(true);
 
     const formData = new FormData();
     formData.append("session_id", sessionId.toString());
@@ -148,6 +161,14 @@ export default function FileUpload() {
   };
 
   const openFileDialog = () => {
+    if (isUploading) {
+      toast({
+        variant: "default",
+        title: "Upload Error",
+        description: "You can upload only one contract at a time.",
+      });
+      return;
+    }
     fileInputRef.current?.click();
   };
 
@@ -177,6 +198,7 @@ export default function FileUpload() {
           id="fileInput"
           ref={fileInputRef}
           onChange={handleFileChange}
+          disabled={isUploading}
           multiple
           accept="application/pdf"
         />
