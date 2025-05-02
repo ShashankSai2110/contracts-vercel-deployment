@@ -158,6 +158,7 @@ export default function FileUpload() {
 
   const removeFile = (fileToRemove: File) => {
     setFiles((prevFiles) => prevFiles.filter((f) => f.file !== fileToRemove));
+    setIsUploading(false);
   };
 
   const openFileDialog = () => {
