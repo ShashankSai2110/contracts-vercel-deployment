@@ -16,12 +16,12 @@ export default function FileUpload() {
   // Replace this with your actual session ID from cookies, context, props, etc.
   const { sessionId, setIsFileUploaded, setSocketState } = useStore();
 
-
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     if (!isUploading) {
       setIsDragging(true);
-    }  };
+    }
+  };
 
   const handleDragLeave = () => {
     setIsDragging(false);
@@ -66,7 +66,7 @@ export default function FileUpload() {
     const formData = new FormData();
     formData.append("session_id", sessionId.toString());
     formData.append("category", constants.CATEGORIES.CONTRACT);
-    
+
     newFiles.forEach((fileWithProgress) => {
       formData.append("files", fileWithProgress.file);
     });
@@ -116,7 +116,7 @@ export default function FileUpload() {
   // Replace this with actual session ID from cookies, context, or props
 
   const processFile = () => {
-    const wsUrl = `${constants.WS_URL}?session_id=${sessionId}`; 
+    const wsUrl = `${constants.WS_URL}?session_id=${sessionId}`;
     socketRef.current = new WebSocket(wsUrl);
 
     socketRef.current.onopen = () => {
@@ -126,11 +126,11 @@ export default function FileUpload() {
     socketRef.current.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
-        
+
         if (["chunking", "embedding", "saving"].includes(message.status)) {
           setSocketState(message.status as any);
         }
-    
+
         if (message.status === "done") {
           setSocketState("done");
           socketRef.current?.close();
@@ -151,7 +151,8 @@ export default function FileUpload() {
       toast({
         variant: "destructive",
         title: "Connection Error",
-        description: "Failed to establish WebSocket connection. Please try again.",
+        description:
+          "Failed to establish WebSocket connection. Please try again.",
       });
     };
   };

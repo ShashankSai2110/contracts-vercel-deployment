@@ -8,8 +8,21 @@ import UploadSupportingDocuments from "@/components/supporting-documents-upload"
 import { useStore } from "@/lib/useStore";
 import WebSocketLoaders from "@/components/web-socket-loaders";
 import background from "@/assets/background.png";
+import { FileSidebar } from "@/components/ui/sidebar";
+import { useState } from "react";
+
 export default function Home() {
   const { user, messages, isFileUploaded } = useStore();
+
+  // Sources sheet state
+  const [isSourcesSheetOpen, setIsSourcesSheetOpen] = useState(false);
+  const [sourcesForSheet, setSourcesForSheet] = useState<any[]>([]);
+
+  const handleShowSources = (sources: any[] | undefined) => {
+    setSourcesForSheet(sources || []);
+    setIsSourcesSheetOpen(true);
+  };
+  const handleCloseSources = () => setIsSourcesSheetOpen(false);
 
   return (
     <div
@@ -48,7 +61,10 @@ export default function Home() {
                     <FileUpload />
                     {isFileUploaded && <UploadSupportingDocuments />}
                     <WebSocketLoaders />
-                    <ChatMessages messages={messages} />
+                    <ChatMessages
+                      messages={messages}
+                      onShowSources={handleShowSources}
+                    />
                     <ChatInput />
                   </div>
                 </div>
@@ -57,6 +73,22 @@ export default function Home() {
           </div>
         </main>
       </div>
+      {/* Render the SourcesSheet at the root level so it overlays the whole app */}
+
+      <FileSidebar isOpen={isSourcesSheetOpen} setIsOpen={handleCloseSources}>
+        <div className="p-4 overflow-y-auto h-[calc(100%-64px)]">
+          {sourcesForSheet.map((source, index) => (
+            <div key={index} className="mb-4 p-4 border rounded-lg">
+              <div className="text-sm text-gray-500 mb-2">
+                Page {source.metadata.page} | {source.metadata.source_file}
+              </div>
+              <p className="text-sm whitespace-pre-wrap">
+                {source.page_content}
+              </p>
+            </div>
+          ))}
+        </div>
+      </FileSidebar>
     </div>
   );
 }

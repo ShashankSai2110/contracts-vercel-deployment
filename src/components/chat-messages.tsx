@@ -3,17 +3,30 @@
 import { useEffect, useRef } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { useStore } from "@/lib/useStore";
+import { FileText } from "lucide-react";
 
 type Message = {
   role: "user" | "system";
   content: string;
+  source_documents?: {
+    page_content: string;
+    metadata: {
+      document_id: string;
+      page: number;
+      source: string;
+      source_file: string;
+      upload_timestamp: string;
+    };
+    type: string;
+  }[];
 };
 
 type ChatMessagesProps = {
   messages: Message[];
+  onShowSources: (sources: Message["source_documents"]) => void;
 };
 
-export default function ChatMessages({ messages }: ChatMessagesProps) {
+export default function ChatMessages({ messages, onShowSources }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { botLoading } = useStore();
 
@@ -41,6 +54,15 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
             }`}
           >
             <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+            {msg.role === "system" && msg.source_documents && msg.source_documents.length > 0 && (
+              <button
+                onClick={() => onShowSources(msg.source_documents)}
+                className="mt-2 flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700"
+              >
+                <FileText className="h-3 w-3" />
+                Sources
+              </button>
+            )}
           </div>
           {msg.role === "user" && <div className="text-xl">👤</div>}
         </div>
