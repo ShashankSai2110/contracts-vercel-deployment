@@ -1,6 +1,17 @@
 type Message = {
   role: "user" | "system";
   content: string;
+  source_documents?: {
+    page_content: string;
+    metadata: {
+      document_id: string;
+      page: number;
+      source: string;
+      source_file: string;
+      upload_timestamp: string;
+    };
+    type: string;
+  }[];
 };
 
 type Question = {
